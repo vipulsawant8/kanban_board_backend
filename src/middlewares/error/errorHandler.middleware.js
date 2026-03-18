@@ -94,18 +94,7 @@ const errorHandler = (err, req, res, next) => {
 	}
 
 	// -----------------------------------------
-	// 6. Custom ApiError instance
-	// -----------------------------------------
-	if (err.statusCode) {
-		return res.status(err.statusCode).json({
-			success: false,
-			message: err.message,
-			...(err.data && { data: err.data })
-		});
-	}
-
-	// -----------------------------------------
-	// 7. Zod Validation Errors 
+	// 6. Zod Validation Errors 
 	// -----------------------------------------
 	if (err instanceof ZodError) {
 		const message =
@@ -114,6 +103,17 @@ const errorHandler = (err, req, res, next) => {
 		return res.status(400).json({
 			success: false,
 			message,
+		});
+	}
+
+	// -----------------------------------------
+	// 7. Custom ApiError instance
+	// -----------------------------------------
+	if (err.statusCode) {
+		return res.status(err.statusCode).json({
+			success: false,
+			message: err.message,
+			...(err.data && { data: err.data })
 		});
 	}
 

@@ -1,10 +1,9 @@
-import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import ApiError from "../../utils/ApiError.js";
 import User from "../../models/user.model.js";
 import ERRORS from "../../constants/errors.js";
 
-const verifyLogin = asyncHandler( async (req, res, next) => {
+const verifyLogin =  async (req, res, next) => {
 	
 	const accessToken = req.cookies?.accessToken;
 
@@ -30,6 +29,6 @@ const verifyLogin = asyncHandler( async (req, res, next) => {
 	req.user = user;
 	req.user.deviceId = decodedToken.deviceId;
 	next();
-} );
+};
 
 export default verifyLogin;

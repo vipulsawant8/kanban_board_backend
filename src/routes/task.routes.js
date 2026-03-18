@@ -1,10 +1,13 @@
 import { Router } from "express";
 
-import { burstLimiter, createResourceLimiter, updateResourceLimiter, deleteResourceLimiter } from "../middlewares/limiters/setLimiters.js";
-import { validate } from "../middlewares/validate/validate.middleware.js";
 import verifyLogin from "../middlewares/auth/verifyLogin.js";
+import { burstLimiter, createResourceLimiter, updateResourceLimiter, deleteResourceLimiter } from "../middlewares/limiters/setLimiters.js";
 
+import sanitizeBody from "../middlewares/sanitize/sanitize.middleware.js";
+
+import { validate } from "../middlewares/validate/validate.middleware.js";
 import { createTaskSchema, updateTaskSchema, deleteTaskSchema, reorderTasksSchema } from "../validations/task.schema.js";
+
 import { fetchTasks, createTask, updateTask, deleteTask, reorderTasks } from "../controllers/task.controller.js";
 
 const router = Router();
@@ -34,7 +37,7 @@ const router = Router();
  *                   items:
  *                     $ref: '#/components/schemas/Task'
  */
-router.get('/', verifyLogin, fetchTasks);
+router.get('/', verifyLogin, sanitizeBody, fetchTasks);
 
 /**
  * @swagger
@@ -67,7 +70,7 @@ router.get('/', verifyLogin, fetchTasks);
  *       200:
  *         description: Task created successfully
  */
-router.post('/', verifyLogin, burstLimiter, createResourceLimiter, validate(createTaskSchema), createTask);
+router.post('/', verifyLogin, burstLimiter, createResourceLimiter, sanitizeBody, validate(createTaskSchema), createTask);
 
 /**
  * @swagger
@@ -99,7 +102,7 @@ router.post('/', verifyLogin, burstLimiter, createResourceLimiter, validate(crea
  *       200:
  *         description: Tasks reordered successfully
  */
-router.patch('/reorder', verifyLogin, validate(reorderTasksSchema), reorderTasks);
+router.patch('/reorder', verifyLogin, sanitizeBody, validate(reorderTasksSchema), reorderTasks);
 
 /**
  * @swagger
@@ -135,7 +138,7 @@ router.patch('/reorder', verifyLogin, validate(reorderTasksSchema), reorderTasks
  *       404:
  *         description: Task not found
  */
-router.patch('/:id', verifyLogin, burstLimiter, updateResourceLimiter, validate(updateTaskSchema), updateTask);
+router.patch('/:id', verifyLogin, burstLimiter, updateResourceLimiter, sanitizeBody, validate(updateTaskSchema), updateTask);
 
 /**
  * @swagger
@@ -158,6 +161,6 @@ router.patch('/:id', verifyLogin, burstLimiter, updateResourceLimiter, validate(
  *       404:
  *         description: Task not found
  */
-router.delete('/:id', verifyLogin, burstLimiter, deleteResourceLimiter, validate(deleteTaskSchema), deleteTask);
+router.delete('/:id', verifyLogin, burstLimiter, deleteResourceLimiter, sanitizeBody, validate(deleteTaskSchema), deleteTask);
 
 export default router;

@@ -1,11 +1,10 @@
-import asyncHandler from 'express-async-handler';
-import logger from "../utils/logger.js";
+// import logger from "../utils/logger.js";
 
 import Task from '../models/task.model.js';
 import ApiError from '../utils/ApiError.js';
 import ERRORS from '../constants/errors.js';
 
-const fetchTasks = asyncHandler( async (req, res) => {
+const fetchTasks =  async (req, res) => {
 	const user = req.user;
 	
 		req.log.info(
@@ -25,9 +24,9 @@ const fetchTasks = asyncHandler( async (req, res) => {
 		data: tasks,
 		success: true
 	})
-} );
+};
 
-const createTask = asyncHandler( async (req, res) => {
+const createTask =  async (req, res) => {
 	const user = req.user;
 
 	const title = req.body.title?.trim();
@@ -52,9 +51,9 @@ const createTask = asyncHandler( async (req, res) => {
 		data: newTask,
 		success: true
 	});
-} );
+};
 
-const updateTask = asyncHandler( async (req, res) => {
+const updateTask =  async (req, res) => {
 	const user = req.user;
 	const taskID = req.params.id;
 
@@ -79,9 +78,9 @@ const updateTask = asyncHandler( async (req, res) => {
 		data: task,
 		success: true
 	});
-} );
+};
 
-const deleteTask = asyncHandler( async (req, res) => {
+const deleteTask =  async (req, res) => {
 	const user = req.user;
 	const taskID = req.params.id;
 
@@ -103,9 +102,9 @@ const deleteTask = asyncHandler( async (req, res) => {
 		data: task,
 		success: true
 	});
-} );
+};
 
-const reorderTasks = asyncHandler( async (req, res) => {
+const reorderTasks =  async (req, res) => {
 	const user = req.user;
 	const { tasksOrder } = req.body;
 
@@ -138,6 +137,6 @@ const reorderTasks = asyncHandler( async (req, res) => {
 
 	const response = { message: "Reordered", success: true, data: updatedTasks };
 	return res.status(200).json(response);
-} );
+};
 
 export { fetchTasks, createTask, updateTask, deleteTask, reorderTasks };
