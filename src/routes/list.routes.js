@@ -1,10 +1,14 @@
 import { Router } from "express";
 
-import { burstLimiter, createResourceLimiter, updateResourceLimiter, deleteResourceLimiter } from "../middlewares/limiters/setLimiters.js";
-import { validate } from "../middlewares/validate/validate.middleware.js";
 import verifyLogin from "../middlewares/auth/verifyLogin.js";
 
+import { burstLimiter, createResourceLimiter, updateResourceLimiter, deleteResourceLimiter } from "../middlewares/limiters/setLimiters.js";
+
+import sanitizeBody from "../middlewares/sanitize/sanitize.middleware.js";
+
+import { validate } from "../middlewares/validate/validate.middleware.js";
 import { createListSchema, updateListSchema, deleteListSchema, reorderListsSchema } from "../validations/list.schema.js";
+
 import { fetchLists, createList, updateList, deleteList, reorderLists } from "../controllers/list.controller.js";
 
 const router = Router();
@@ -34,7 +38,7 @@ const router = Router();
  *                   items:
  *                     $ref: '#/components/schemas/List'
  */
-router.get('/', verifyLogin, fetchLists);
+router.get('/', verifyLogin, sanitizeBody, fetchLists);
 
 /**
  * @swagger
@@ -60,7 +64,7 @@ router.get('/', verifyLogin, fetchLists);
  *       200:
  *         description: List created successfully
  */
-router.post('/', verifyLogin, burstLimiter, createResourceLimiter, validate(createListSchema), createList);
+router.post('/', verifyLogin, burstLimiter, createResourceLimiter, sanitizeBody, validate(createListSchema), createList);
 
 /**
  * @swagger
@@ -90,7 +94,7 @@ router.post('/', verifyLogin, burstLimiter, createResourceLimiter, validate(crea
  *       200:
  *         description: Lists reordered successfully
  */
-router.patch('/reorder', verifyLogin, validate(reorderListsSchema), reorderLists);
+router.patch('/reorder', verifyLogin, sanitizeBody, validate(reorderListsSchema), reorderLists);
 
 /**
  * @swagger
@@ -123,7 +127,7 @@ router.patch('/reorder', verifyLogin, validate(reorderListsSchema), reorderLists
  *       404:
  *         description: List not found
  */
-router.patch('/:id', verifyLogin, burstLimiter, updateResourceLimiter, validate(updateListSchema), updateList);
+router.patch('/:id', verifyLogin, burstLimiter, updateResourceLimiter, sanitizeBody, validate(updateListSchema), updateList);
 
 /**
  * @swagger
@@ -146,6 +150,6 @@ router.patch('/:id', verifyLogin, burstLimiter, updateResourceLimiter, validate(
  *       404:
  *         description: List not found
  */
-router.delete('/:id', verifyLogin, burstLimiter, deleteResourceLimiter, validate(deleteListSchema), deleteList);
+router.delete('/:id', verifyLogin, burstLimiter, deleteResourceLimiter, sanitizeBody, validate(deleteListSchema), deleteList);
 
 export default router;

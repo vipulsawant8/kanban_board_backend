@@ -1,4 +1,3 @@
-import asyncHandler from 'express-async-handler';
 import logger from "../utils/logger.js";
 
 import List from '../models/list.model.js';
@@ -6,7 +5,7 @@ import ApiError from '../utils/ApiError.js';
 import Task from '../models/task.model.js';
 import ERRORS from '../constants/errors.js';
 
-const fetchLists = asyncHandler( async (req, res) => {
+const fetchLists =  async (req, res) => {
 
 	const user = req.user;
 
@@ -22,9 +21,9 @@ const fetchLists = asyncHandler( async (req, res) => {
 	);
 
 	return res.status(200).json({ message: "Lists fetched successfully", data: lists, success: true });
-} );
+};
 
-const createList = asyncHandler( async (req, res) => {
+const createList =  async (req, res) => {
 
 	const user = req.user;
 	const title = req.body.title?.trim();
@@ -43,9 +42,9 @@ const createList = asyncHandler( async (req, res) => {
 	);
 
 	return res.status(200).json({ message: `List "${newList.title}" was created`, data: newList, success: true });
-} );
+};
 
-const updateList = asyncHandler( async (req, res) => {
+const updateList =  async (req, res) => {
 
 	const user = req.user;
 	const listID = req.params.id;
@@ -70,9 +69,9 @@ const updateList = asyncHandler( async (req, res) => {
 		data: list,
 		success: true
 	});
-} );
+};
 
-const deleteList = asyncHandler( async (req, res) => {
+const deleteList =  async (req, res) => {
 
 	const user = req.user;
 	const listID = req.params.id;
@@ -97,9 +96,9 @@ const deleteList = asyncHandler( async (req, res) => {
 		data: list,
 		success: true
 	});
-} );
+};
 
-const reorderLists = asyncHandler( async (req, res) => {
+const reorderLists =  async (req, res) => {
 	const user = req.user;
 
 	const { listsOrder } = req.body;
@@ -132,6 +131,6 @@ const reorderLists = asyncHandler( async (req, res) => {
 
 	const response = { message: "Reordered", success: true, data: updatedLists };
 	return res.status(200).json(response);
-});
+};
 
 export { fetchLists, createList, updateList, deleteList, reorderLists };
