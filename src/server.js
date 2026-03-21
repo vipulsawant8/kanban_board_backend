@@ -8,15 +8,13 @@ const initiateServer = async () => {
 	
 	try {
     	logger.info("Server initialization started");
+		
 		await connectDB();
     	logger.info("Database connected successfully");
 
 		const PORT = process.env.PORT;
-		// app.listen(PORT, () => {
-
-			await new Promise((resolve) => app.listen(PORT, resolve));
-			logger.info({ port: PORT }, "Server running successfully");
-		// });
+		await new Promise((resolve) => app.listen(PORT, resolve));
+		logger.info({ port: PORT }, "Server running successfully");
 	} catch (error) {
 		
 		logger.fatal({ err: error }, "Server failed to start");
@@ -31,16 +29,9 @@ const shutdown = async (signal) => {
 
 	try {
 		// Stop accepting new connections
-		server.close(() => {
+		app.close(() => {
 			logger.info("HTTP server closed");
 		});
-
-		// Close socket.io
-		if (io) {
-			io.close(() => {
-				logger.info("Socket.IO closed");
-			});
-		}
 
 		// Close DB
 		const mongoose = await import("mongoose");
