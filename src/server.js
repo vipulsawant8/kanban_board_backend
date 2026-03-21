@@ -4,45 +4,45 @@ import app from './app.js';
 import connectDB from './db/connectDB.js';
 import logger from './utils/logger.js';
 
+let server; // 👈 important
+
 const initiateServer = async () => {
-	
 	try {
-    	logger.info("Server initialization started");
+		logger.info("Server initialization started");
+		
 		await connectDB();
-    	logger.info("Database connected successfully");
+		logger.info("Database connected successfully");
 
 		const PORT = process.env.PORT;
-		// app.listen(PORT, () => {
 
-			await new Promise((resolve) => app.listen(PORT, resolve));
+		server = app.listen(PORT, () => {
 			logger.info({ port: PORT }, "Server running successfully");
-		// });
+		});
+
 	} catch (error) {
-		
 		logger.fatal({ err: error }, "Server failed to start");
-    	process.exit(1);	
+		process.exit(1);	
 	}
 };
 
 initiateServer();
 
+let isShuttingDown = false;
+
 const shutdown = async (signal) => {
+	if (isShuttingDown) return;   // 👈 first line
+	isShuttingDown = true;        // 👈 immediately set
+
 	logger.warn(`${signal} received. Shutting down gracefully...`);
 
 	try {
-		// Stop accepting new connections
-		server.close(() => {
-			logger.info("HTTP server closed");
-		});
-
-		// Close socket.io
-		if (io) {
-			io.close(() => {
-				logger.info("Socket.IO closed");
+		if (server) {
+			await new Promise((resolve, reject) => {
+				server.close((err) => err ? reject(err) : resolve());
 			});
+			logger.info("HTTP server closed");
 		}
 
-		// Close DB
 		const mongoose = await import("mongoose");
 		await mongoose.default.connection.close();
 		logger.info("MongoDB connection closed");
